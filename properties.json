@@ -1,10 +1,10 @@
 {
 "App1":{
-"REGION":"ap-south-1",
+"REGION":"ap-south-7",
 "AMI":"ami-284293"
 },
 "App2":{
-"REGION":"ap-north-2",
+"REGION":"ap-north-9",
 "AMI":"ami-239439"
 }
 
