@@ -33,5 +33,5 @@ def buildJob2() {
 
 def buildJob3() {
 			def props = readJSON file: 'properties.json', text: ''
-                build job: 'Applications/App2', parameters: [string(name: 'REGION', value: props['App3']['REGION']), string(name: 'AMI', value: props['App3']['AMI'])]
+                build job: 'Applications/App3', parameters: [string(name: 'REGION', value: props['App3']['REGION']), string(name: 'AMI', value: props['App3']['AMI'])]
 }
