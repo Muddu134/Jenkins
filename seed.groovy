@@ -2,11 +2,11 @@ import groovy.io.FileType
 import groovy.json.JsonSlurperClassic
 
 def create_pipeline(jobName) {
-
+println jobName
     def propertiesFile = new JsonSlurperClassic().parseText(readFileFromWorkspace('properties.json'))
     pipelineJob('Applications/' + jobName) {
         parameters {
-            propertiesFile.${jobName}.each {
+            propertiesFile.jobName.each {
             stringParam('REGION',it.REGION,"null")
 			stringParam('AMI',it.AMI,"null")
             }
@@ -30,7 +30,7 @@ String JobDir = "${WORKSPACE}" + "/Applications";
 new File(JobDir).eachDir() { dir ->
     println "JobPath = " + dir.getPath()
 
-    String jobName = dir.getPath().substring(dir.getPath().lastIndexOf("Applications/") + 5)
+    String jobName = dir.getPath().substring(dir.getPath().lastIndexOf("Applications/") + 13)
     println "JobName " + jobName
     create_pipeline(jobName)
 }
@@ -75,7 +75,7 @@ new File(JobDir).eachDir() { dir ->
 
 
 //list.each {
-//String jobName = it.path.substring(it.path.lastIndexOf("Applications/") + 5)
+//String jobName = it.path.substring(it.path.lastIndexOf("Applications/") + 13)
 
 //println jobName;
 //

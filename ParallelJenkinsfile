@@ -1,9 +1,9 @@
 pipeline {
     agent any
     stages {
-		        stage('Build_Infrstructure') {
+		        stage('Build_Infrastructure') {
             steps{
-			build 'Applications/Build_Infrstructure'
+			build 'Applications/Build_Infrastructure'
                 }
             }
         stage('Build_parallel') {

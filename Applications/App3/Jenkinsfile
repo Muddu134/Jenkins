@@ -1,0 +1,14 @@
+pipeline {
+    agent any
+    stages {
+        stage(Build_App3) {
+            
+            steps{
+                sh 'echo "The region is ${REGION}"'
+                
+            }
+        }
+
+    }
+    
+}
