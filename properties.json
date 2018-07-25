@@ -6,6 +6,10 @@
 "App2":{
 "REGION":"ap-north-9",
 "AMI":"ami-239439"
+},
+"App3":{
+"REGION":"us-west-1",
+"AMI":"ami-239439"
 }
 
 }
