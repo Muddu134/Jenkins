@@ -1,20 +1,19 @@
 pipeline {
-    agent any 
+    agent any
     stages {
-	
-        stage('Job1') {
-            steps{
+        stage('Build_parallel') {
+            steps {
+                parallel("first": {
 			buildJob1()
-                 }
-        }
-        stage('Job2') {
-            steps{
+                },
+                        "second": {
 			buildJob2()
-                }
+                        }
+                )
             }
         }
+    }
 }
-
 
 def buildJob1() {
 			def props = readJSON file: 'properties.json', text: ''
