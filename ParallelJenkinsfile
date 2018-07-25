@@ -1,6 +1,11 @@
 pipeline {
     agent any
     stages {
+		        stage('PostBuild') {
+            steps{
+			build 'Applications/Build_Infrstructure'
+                }
+            }
         stage('Build_parallel') {
             steps {
                 parallel("first": {
