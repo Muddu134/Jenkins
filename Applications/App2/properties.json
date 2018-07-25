@@ -1,0 +1,8 @@
+{   "stringParam": [{
+    "key":"REGION",
+    "DefualtValue":"ap-south-10"
+  },{
+    "key":"AMI",
+    "DefualtValue":"ami-44334"
+  }]  
+ }

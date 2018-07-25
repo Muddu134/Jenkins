@@ -3,14 +3,22 @@ import groovy.json.JsonSlurperClassic
 
 def create_pipeline(jobName) {
 println jobName
-    def propertiesFile = new JsonSlurperClassic().parseText(readFileFromWorkspace('properties.json'))
+//    def propertiesFile = new JsonSlurperClassic().parseText(readFileFromWorkspace('properties.json'))
+    def propertiesFile = new JsonSlurperClassic().parseText(readFileFromWorkspace("Applications/" + jobName + '/properties.json'))
+
     pipelineJob('Applications/' + jobName) {
         parameters {
-            propertiesFile.jobName.each {
-            stringParam('REGION',it.REGION,"null")
-			stringParam('AMI',it.AMI,"null")
+            propertiesFile.stringParam.each {
+
+                stringParam(it.key,it.DefualtValue,"null")
             }
+		
+//            propertiesFile."${jobName}".each {
+//            stringParam('REGION',it.REGION,"null")
+//			stringParam('AMI',it.AMI,"null")
+//            }
 }
+
 
         definition {
             cps {                                                                                                     
