@@ -1,7 +1,7 @@
 pipeline {
     agent any
     stages {
-		        stage('PostBuild') {
+		        stage('Build_Infrstructure') {
             steps{
 			build 'Applications/Build_Infrstructure'
                 }
