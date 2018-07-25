@@ -1,6 +1,11 @@
 pipeline {
     agent any
     stages {
+		stage('clone_repo'){
+	steps {
+	git branch: 'seed_job_parallel', credentialsId: 'Muddu134-Github', url: 'git@github.com:Muddu134/Jenkins.git'
+	}
+	}
         stage(Build_App3) {
             
             steps{
