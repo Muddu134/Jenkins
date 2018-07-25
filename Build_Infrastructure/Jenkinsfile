@@ -1,0 +1,13 @@
+pipeline {
+    agent any
+    stages {
+        stage(Build_Infrastructure) {
+            
+            steps{
+                sh 'echo "Here we are building infrastructure on AWS"'
+                
+            }
+        }
+    }
+    
+}
