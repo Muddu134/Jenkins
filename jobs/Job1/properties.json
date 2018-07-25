@@ -1,0 +1,21 @@
+{   "stringParam": [{
+    "key":"app",
+    "DefualtValue":"abc"
+  },{
+    "key":"version",
+    "DefualtValue":"1.23"
+  },{
+        "key":"region",
+        "DefualtValue":"us-east-1"
+      }],
+  "choiceParam": [{
+  "key": "Environment",
+  "choices":["DEV", "QA", "UAT"]
+
+  } ,
+                {
+                         "key": "user",
+                         "choices":["alam", "surendra"]
+
+                         }     ]
+ }

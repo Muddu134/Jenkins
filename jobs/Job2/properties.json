@@ -1,0 +1,11 @@
+{   "stringParam": [{
+    "key":"app",
+    "DefualtValue":"xyz"
+  },{
+    "key":"version",
+    "DefualtValue":"2.01"
+  },{
+           "key":"region",
+           "DefualtValue":"us-west-1"
+         }]  
+ }
