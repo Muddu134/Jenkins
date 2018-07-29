@@ -1,0 +1,12 @@
+---
+
+- name: uninstall rabbitmq
+  yum: name=rabbitmq-server state=absent update_cache=yes
+  when: ansible_os_family == 'RedHat'
+  become: yes
+
+- name: uninstall rabbitmq
+  apt: name=rabbitmq-server state=absent update_cache=yes
+  when: ansible_os_family == 'Debian'
+  become: yes
+

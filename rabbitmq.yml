@@ -1,0 +1,7 @@
+---
+- hosts: "{{ host }}"
+  vars:
+     rmq_username: "{{ lookup('env','rmq_username') }}"
+     rmq_password: "{{ lookup('env','rmq_password') }}"
+  roles:
+    - rabbitmq

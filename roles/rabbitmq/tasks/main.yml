@@ -1,0 +1,8 @@
+---
+
+- include: install.yml
+  when: action_type == 'install'
+
+- include: uninstall.yml
+  when: action_type == 'uninstall'
+

@@ -1,0 +1,114 @@
+---
+- include: install_epel.yml
+  when: "install_epel == 'yes'"
+
+- name: install libselinux-python
+  yum: name=libselinux-python state=present
+  become: yes
+
+- name: install erlang
+  yum: name=erlang state=latest
+  become: yes
+  ignore_errors: yes
+  register: erlang_install
+
+
+- get_url: url=http://packages.erlang-solutions.com/erlang-solutions-1.0-1.noarch.rpm dest=/tmp/erlang-solutions-1.0-1.noarch.rpm
+  when: erlang_install is defined and erlang_install | failed
+
+- command: "rpm -Uvh /tmp/erlang-solutions-1.0-1.noarch.rpm"
+  when: erlang_install is defined and erlang_install | failed
+  become: yes  
+
+- name: install erlang
+  yum: name=erlang state=present
+  become: yes
+  when: erlang_install is defined and erlang_install | failed
+
+- rpm_key:
+    state: present
+    key: "https://www.rabbitmq.com/rabbitmq-release-signing-key.asc"
+  become: yes
+
+- name: install rabbitmq-server (RedHat) - Default
+  yum: "name=rabbitmq-server state=present update_cache=yes"
+  become: yes
+  register: rmq_install
+  ignore_errors: yes
+  when: rabbitmq_redhat_version is undefined
+
+- set_fact:
+     rabbitmq_redhat_version: 3.1.5
+  when: rmq_install is defined and rmq_install | failed
+
+- set_fact:
+     rhel_version: "{{rabbitmq_redhat_version}}-1"
+     major: "{{ rabbitmq_redhat_version.split('.')[0] }}"
+     minor: "{{ rabbitmq_redhat_version.split('.')[1] }}"
+     build: "{{ rabbitmq_redhat_version.split('.')[2] }}"
+  when: rabbitmq_redhat_version is defined
+
+- set_fact:
+     rhel_version: "{{rabbitmq_redhat_version}}-1.el{{ansible_distribution_major_version}}"
+  when: "rabbitmq_redhat_version is defined and major|int >= 3 and minor|int >= 6 and build|int >= 6"
+
+- name: install rabbitmq-server (RedHat)
+  yum: "name=http://www.rabbitmq.com/releases/rabbitmq-server/v{{rabbitmq_redhat_version}}/rabbitmq-server-{{rhel_version}}.noarch.rpm state=present update_cache=yes"
+  become: yes
+  when: rabbitmq_redhat_version is defined
+
+
+- name: enable rabbitmq-server to survive reboot
+  service: name=rabbitmq-server enabled=yes
+  become: yes
+
+- name: Check that the plugins exists
+  stat:
+    path: /usr/sbin/rabbitmq-plugins
+  register: stat_result
+
+- name: copy file
+  copy: src=rabbitmq-plugins dest=/usr/sbin/rabbitmq-plugins
+  become: yes
+  when: stat_result.stat.exists == False
+
+- command: "chmod +x /usr/sbin/rabbitmq-plugins"
+  become: yes
+  when: stat_result.stat.exists == False
+
+- name: enable plugin rabbitmq_management
+  command: rabbitmq-plugins enable rabbitmq_management
+  become: yes
+
+- name: copy file
+  copy: src=rabbitmq-server dest=/etc/default/rabbitmq-server
+  become: yes
+
+- name: copy file
+  copy: src=rabbitmq.config dest=/etc/rabbitmq/rabbitmq.config
+  become: yes 
+
+- name: restart rabbitmq
+  service: name=rabbitmq-server state=restarted
+  become: yes
+
+
+- name: check user
+  shell: "rabbitmqctl list_users|grep \"^{{rmq_username}}\\s\""
+  become: yes
+  ignore_errors: yes
+  register: user_check
+
+- name: add user
+  command: "rabbitmqctl add_user {{rmq_username}} {{rmq_password}}"
+  become: yes
+  when: user_check is defined and user_check | failed
+
+
+- name: set tags to user
+  command: "rabbitmqctl set_user_tags {{rmq_username}} administrator Management"
+  become: yes
+
+- name: set permissions to user
+  command: "rabbitmqctl set_permissions -p / {{rmq_username}} \".*\" \".*\" \".*\""
+  become: yes

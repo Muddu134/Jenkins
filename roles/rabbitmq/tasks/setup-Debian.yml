@@ -1,0 +1,68 @@
+---
+
+- name: Install the package "rabbitmq" (ubuntu)
+  apt:
+    deb: "http://www.rabbitmq.com/releases/rabbitmq-server/v{{ rabbitmq_ubuntu_version }}/rabbitmq-server_{{ rabbitmq_ubuntu_version }}-1_all.deb"
+    state: present
+    update_cache: yes
+    force: yes
+    install_recommends: yes
+  when: rabbitmq_ubuntu_version is defined
+  become: yes
+
+- name: Install the package "rabbitmq"  ubuntu - Default
+  apt:
+    state: present
+    name: rabbitmq-server
+    update_cache: yes
+  when: rabbitmq_ubuntu_version is undefined
+  become: yes
+
+- name: enable rabbitmq-server to survive reboot
+  service: name=rabbitmq-server enabled=yes
+  become: yes
+
+- name: Check that the plugins exists
+  stat:
+    path: /usr/sbin/rabbitmq-plugins
+  register: stat_result
+
+- name: copy file
+  copy: src=rabbitmq-plugins dest=/usr/sbin/rabbitmq-plugins
+  become: yes
+  when: stat_result.stat.exists == False
+
+- command: "chmod +x /usr/sbin/rabbitmq-plugins"
+  become: yes
+  when: stat_result.stat.exists == False
+
+- name: enable plugin rabbitmq_management
+  command: rabbitmq-plugins enable rabbitmq_management
+  become: yes
+
+- name: copy file
+  copy: src=rabbitmq-server dest=/etc/default/rabbitmq-server
+  become: yes
+
+- name: copy file
+  copy: src=rabbitmq.config dest=/etc/rabbitmq/rabbitmq.config
+  become: yes   
+  
+- name: check user
+  shell: "rabbitmqctl list_users|grep \"^{{rmq_username}}\\s\""
+  become: yes
+  ignore_errors: yes
+  register: user_check
+
+- name: add user
+  command: "rabbitmqctl add_user {{rmq_username}} {{rmq_password}}"
+  become: yes
+  when: user_check is defined and user_check | failed
+
+- name: set tags to user
+  command: "rabbitmqctl set_user_tags {{rmq_username}} administrator Management"
+  become: yes
+
+- name: set permissions to user
+  command: "rabbitmqctl set_permissions -p / {{rmq_username}} \".*\" \".*\" \".*\""
+  become: yes

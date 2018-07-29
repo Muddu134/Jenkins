@@ -1,0 +1,12 @@
+---
+# http://www.rabbitmq.com/releases/rabbitmq-server
+
+# Change the versions below to install specific version during runtime
+
+#rabbitmq_version: 
+#rabbitmq_redhat_version: 
+#rabbitmq_ubuntu_version:
+action_type: "install"
+rmq_username: "guest"
+rmq_password: "guest"
+install_epel: "yes"
