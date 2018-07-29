@@ -1,0 +1,25 @@
+# Check guides at https://confluence.atlassian.com/x/14UWN for more examples.
+# Only use spaces to indent your .yml configuration.
+# -----
+# We can specify a custom docker image from Docker Hub as your build environment.
+image: java:8
+
+pipelines:
+  branches:
+    '{feature/*,fix/*,master}':
+    - step:
+        name: Build
+        caches:
+          - gradle
+        script: # Commands to build the project.
+          - set -e
+          - source ./scripts/build.sh
+    - step:
+        name: Test Run
+        caches:
+          - gradle
+        script: # Commands to run unit tests for the project.
+          - set -e
+          # Commenting the encrypted values
+          - sed -i "/ENC/ s/^/#/" "config/application.properties"
+          - ./gradlew check

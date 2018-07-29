@@ -1,0 +1,27 @@
+# Check guides at https://confluence.atlassian.com/x/14UWN for more examples.
+# Only use spaces to indent your .yml configuration.
+# -----
+# We can specify a custom docker image from Docker Hub as your build environment.
+image: node:6.12.0
+
+pipelines:
+  branches:
+    '{feature/*,fix/*,master}':
+    - step:
+        name: Build
+        caches:
+          - node
+        script: # Commands to build the project.
+          - npm install
+          - npm install -g grunt-cli
+          - grunt ts
+    - step:
+        name: Test Run & Code Coverage
+        caches:
+          - node
+        script: # Commands to watch code-coverage for the project.
+          - npm install
+          - npm install -g grunt-cli
+          - grunt ts
+          - npm install -g istanbul
+          - istanbul cover ./node_modules/mocha/bin/_mocha ./test/server/*/*/*/*.js
